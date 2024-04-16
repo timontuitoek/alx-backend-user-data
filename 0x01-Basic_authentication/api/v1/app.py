@@ -24,23 +24,23 @@ if auth_type:
 
 # Define error handlers
 @app.errorhandler(404)
-def not_found(error):
+def not_found(error) -> str:
     """ Not found handler """
     return jsonify({"error": "Not found"}), 404
 
 @app.errorhandler(401)
-def unauthorized(error):
+def unauthorized(error) -> str:
     """ Unauthorized handler """
     return jsonify({"error": "Unauthorized"}), 401
 
-@app.errorhandler(403)
-def forbidden(error):
+@app.errorhandler(403) 
+def forbidden(error) -> str:
     """ Forbidden handler """
     return jsonify({"error": "Forbidden"}), 403
 
 # Define before_request handler
 @app.before_request
-def before_request():
+def before_request() -> str:
     """ Handles request filtering and authorization """
     if auth is None:
         return
