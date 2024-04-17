@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
-""" Auth module
-"""
+# auth.py
+
 from typing import List
+from flask import request
 
 
 class Auth:
@@ -39,9 +39,14 @@ class Auth:
         Returns:
             The value of the Authorization header if present, otherwise None.
         """
-        if request is None:
+        if request is None or not hasattr(request, 'headers'):
             return None
 
+        # Check if the Authorization header exists in the request
+        if 'Authorization' not in request.headers:
+            return None
+
+        # Return the value of the Authorization header
         return request.headers.get('Authorization')
 
     def current_user(self, request=None):
