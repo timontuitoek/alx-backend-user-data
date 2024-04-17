@@ -3,9 +3,10 @@
 """
 from typing import List
 
+
 class Auth:
     """ Auth class for API authentication """
-    
+
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """
         Checks if authentication is required for a given path.
@@ -46,7 +47,7 @@ class Auth:
     def current_user(self, request=None):
         """
         Placeholder method for retrieving the current user.
-        
+
         Args:
             request: Flask request object.
 
