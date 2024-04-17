@@ -1,5 +1,5 @@
-# auth.py
-
+#!/usr/bin/env python3
+""" Auth module """
 from typing import List
 from flask import request
 
