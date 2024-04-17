@@ -22,21 +22,25 @@ if auth_type:
         from api.v1.auth.auth import Auth as BasicAuth
         auth = BasicAuth()
 
+
 # Define error handlers
 @app.errorhandler(404)
 def not_found(error) -> str:
     """ Not found handler """
     return jsonify({"error": "Not found"}), 404
 
+
 @app.errorhandler(401)
 def unauthorized(error) -> str:
     """ Unauthorized handler """
     return jsonify({"error": "Unauthorized"}), 401
 
-@app.errorhandler(403) 
+
+@app.errorhandler(403)
 def forbidden(error) -> str:
     """ Forbidden handler """
     return jsonify({"error": "Forbidden"}), 403
+
 
 # Define before_request handler
 @app.before_request
@@ -45,7 +49,8 @@ def before_request() -> str:
     if auth is None:
         return
 
-    excluded_paths = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
+    excluded_paths = ['/api/v1/status/',
+                      '/api/v1/unauthorized/', '/api/v1/forbidden/']
     if request.path in excluded_paths:
         return
 
@@ -57,6 +62,7 @@ def before_request() -> str:
 
     if auth.current_user(request) is None:
         abort(403)
+
 
 if __name__ == "__main__":
     host = getenv("API_HOST", "0.0.0.0")
