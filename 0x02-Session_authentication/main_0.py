@@ -2,7 +2,7 @@
 """ Main 0
 """
 import base64
-from api.v1.auth.basic_auth import BasicAuth
+from api.v1.auth.basic_auth import BasicAuth # type: ignore
 from models.user import User
 
 """ Create a user test """
