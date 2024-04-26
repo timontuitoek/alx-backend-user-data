@@ -4,16 +4,12 @@ Database module
 """
 
 import logging
-
+import logging
 from sqlite3 import IntegrityError
 from sqlalchemy import create_engine  # type: ignore
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.exc import NoResultFound
-
 from user import Base, User
-from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import InvalidRequestError  # type: ignore
 
 # Disable all logging messages
 logging.disable(logging.CRITICAL)
@@ -36,7 +32,7 @@ class DB:
         """Memoized session object
         """
         if self.__session is None:
-            DBSession = sessionmaker(bind=self._engine)
+            DBSession = sessionmaker(bind=self._engine)  # type: ignore
             self.__session = DBSession()
         return self.__session
 
