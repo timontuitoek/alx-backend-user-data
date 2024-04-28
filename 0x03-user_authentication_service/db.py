@@ -64,17 +64,13 @@ class DB:
             raise NoResultFound
         return record
 
-    def update_user(self, user_id: int, **kwargs):
+    def update_user(self, user_id: int, **kwargs) -> None:
         """
-        Updates the user's attributes as passed in the method’s
-        arguments and commits changes to the database.
+        Update user based on user_id and keyword arguments
         """
         user = self.find_user_by(id=user_id)
-
         for key, value in kwargs.items():
-            if hasattr(user, key):
-                setattr(user, key, value)
-            else:
-                raise ValueError(f"Invalid attribute: {key}")
-
+            if not hasattr(user, key):
+                raise ValueError
+            setattr(user, key, value)
         self._session.commit()
