@@ -52,19 +52,17 @@ class DB:
             raise ValueError("User already exists with this email")
         return user
 
-    def find_user_by(self, **kwargs):
-        """Find a user by filtering rows based on input keyword arguments
+    def find_user_by(self, **kwargs) -> User:
+        """
+        Find user based on keyword arguments
         """
         try:
-            user = self._session.query(User).filter_by(**kwargs).first()
-            if user is None:
-                raise NoResultFound
-            ("No user found with the specified criteria")
-            return user
-        except NoResultFound:
-            raise  # Re-raise NoResultFound
-        except InvalidRequestError as e:
-            raise InvalidRequestError("Invalid query arguments") from e
+            record = self._session.query(User).filter_by(**kwargs).first()
+        except TypeError:
+            raise InvalidRequestError
+        if record is None:
+            raise NoResultFound
+        return record
 
     def update_user(self, user_id: int, **kwargs):
         """

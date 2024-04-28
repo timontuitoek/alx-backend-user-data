@@ -3,9 +3,7 @@
 Auth module
 """
 import bcrypt
-
 import uuid
-
 from flask import abort, app, redirect, request
 from app import AUTH
 from db import DB
@@ -37,14 +35,6 @@ class Auth:
         user = self._db.add_user(email=email, hashed_password=hashed_password)
 
         return user
-
-    @staticmethod
-    def _hash_password(password: str) -> bytes:
-        """Hash a password using bcrypt
-        """
-        salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-        return hashed_password
 
     def valid_login(self, email: str, password: str) -> bool:
         """Check if login credentials are valid"""
