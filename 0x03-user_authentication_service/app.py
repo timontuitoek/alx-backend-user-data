@@ -29,25 +29,24 @@ def register_user():
         return jsonify({"message": str(e)}), 400
 
 
-@app.route('/sessions', methods=['POST'])
-def login():
-    # Retrieve email and password from form data
-    email = request.form.get('email')
-    password = request.form.get('password')
+@app.route('/sessions', methods=['POST'], strict_slashes=False)
+def login() -> str:
+    """ POST /sessions
+    Creates new session for user, stores as cookie
+    Email and pswd fields in x-www-form-urlencoded request
+    Return:
+      - JSON payload
+    """
+    email = request.form.get("email")
+    password = request.form.get("password")
+    valid_user = AUTH.valid_login(email, password)
 
-    # Verify login credentials
-    if not AUTH.valid_login(email, password):
-        # Incorrect login credentials
+    if not valid_user:
         abort(401)
-
-    # If login is successful, create a new session
     session_id = AUTH.create_session(email)
-
-    # Store session ID as a cookie in the response
-    response = make_response(jsonify(
-        {'message': 'Login successful', 'email': email}))
-    response.set_cookie('session_id', session_id)
-
+    message = {"email": email, "message": "logged in"}
+    response = jsonify(message)
+    response.set_cookie("session_id", session_id)
     return response
 
 
