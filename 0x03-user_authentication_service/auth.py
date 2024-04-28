@@ -21,6 +21,13 @@ def _hash_password(password: str) -> bytes:
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
 
+def _generate_uuid() -> str:
+    """
+    Generates a UUID
+    """
+    return str(uuid.uuid4())
+
+
 class Auth:
     """Auth class to interact with the authentication database.
     """
@@ -40,17 +47,14 @@ class Auth:
             return new_user
 
     def valid_login(self, email: str, password: str) -> bool:
-        """Check if login credentials are valid"""
+        """ Check valid login """
         try:
             user = self._db.find_user_by(email=email)
-            hashed_password = user.hashed_password.encode('utf-8')
-            return bcrypt.checkpw(password.encode('utf-8'), hashed_password)
-        except ValueError:
-            # Handle ValueError if user is not found
-            return False
-        except Exception as e:
-            # Handle other exceptions
-            print(f"An error occurred: {e}")
+            return bcrypt.checkpw(
+                password.encode('utf-8'),
+                user.hashed_password
+                )
+        except NoResultFound:
             return False
 
     def _generate_uuid(self) -> str:
@@ -62,25 +66,14 @@ class Auth:
         return str(uuid.uuid4())
 
     def create_session(self, email: str) -> str:
-        """Create a session for the user with the given email.
-
-        Args:
-            email (str): The email of the user.
-
-        Returns:
-            str: The session ID.
-        """
-        # Find the user corresponding to the email
-        user = self._db.find_user_by(email=email)
-
-        # Generate a new session ID
-        session_id = self._generate_uuid()
-
-        # Update the user's session ID in the database
-        self._db.update_user(user, session_id=session_id)
-
-        # Return the session ID
-        return session_id
+        """ Create session """
+        try:
+            user = self._db.find_user_by(email=email)
+            session_id = _generate_uuid()
+            self._db.update_user(user.id, session_id=session_id)
+            return session_id
+        except NoResultFound:
+            return None
 
     def get_user_from_session_id(self, session_id: str):
         """Get the user corresponding to the session ID.
