@@ -5,36 +5,39 @@ Auth module
 import bcrypt
 import uuid
 from flask import abort, app, redirect, request
-from app import AUTH
+
 from db import DB
 from user import User
 from sqlalchemy.orm.exc import NoResultFound
+from flask import Flask
+
+app = Flask(__name__)
+
+
+def _hash_password(password: str) -> bytes:
+    """
+    Hashes a password
+    """
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
 
 class Auth:
     """Auth class to interact with the authentication database.
     """
 
+    @app.route('/sessions', methods=['DELETE'])
     def __init__(self):
         self._db = DB()
 
     def register_user(self, email: str, password: str) -> User:
-        """Register a new user
-        """
-        # Check if user already exists
+        """ Registers and returns a new user if email isn't listed"""
         try:
-            existing_user = self._db.find_user_by(email=email)
+            self._db.find_user_by(email=email)
             raise ValueError(f"User {email} already exists")
-        except NoResultFound:  # type: ignore
-            pass   # User does not exist, continue with registration
-
-        # Hash the password
-        hashed_password = self._hash_password(password)
-
-        # Save user to the database
-        user = self._db.add_user(email=email, hashed_password=hashed_password)
-
-        return user
+        except NoResultFound:
+            hashed_password = _hash_password(password)
+            new_user = self._db.add_user(email, hashed_password)
+            return new_user
 
     def valid_login(self, email: str, password: str) -> bool:
         """Check if login credentials are valid"""
@@ -114,11 +117,11 @@ class Auth:
         session_id = request.cookies.get('session_id')
 
         # Find user corresponding to the session ID
-        user = AUTH.get_user_from_session_id(session_id)
+        user = AUTH.get_user_from_session_id(session_id)  # type: ignore
 
         if user is not None:
             # Destroy the session
-            AUTH.destroy_session(user.id)
+            AUTH.destroy_session(user.id)  # type: ignore
 
             # Redirect user to GET /
             return redirect('/')

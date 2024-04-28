@@ -4,7 +4,6 @@ Database module
 """
 
 import logging
-
 from sqlite3 import IntegrityError
 from sqlalchemy import create_engine  # type: ignore
 from sqlalchemy.exc import InvalidRequestError
