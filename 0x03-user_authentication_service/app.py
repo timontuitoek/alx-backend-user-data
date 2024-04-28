@@ -10,6 +10,13 @@ app = Flask(__name__)
 AUTH = Auth()
 
 
+@app.route('/')
+def index() -> str:
+    """ GET /
+    """
+    return jsonify({"message": "Bienvenue"})
+
+
 @app.route("/users", methods=["POST"])
 def register_user():
     email = request.form.get("email")
