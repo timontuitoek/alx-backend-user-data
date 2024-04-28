@@ -3,7 +3,7 @@
 """
 
 
-from flask import Flask, abort, make_response, request, jsonify
+from flask import Flask, abort, make_response, redirect, request, jsonify
 from auth import Auth
 
 app = Flask(__name__)
@@ -48,6 +48,19 @@ def login() -> str:
     response = jsonify(message)
     response.set_cookie("session_id", session_id)
     return response
+
+@app.route("/sessions", methods=["DELETE"], strict_slashes=False)
+def logout() -> str:
+    """DELETE /sessions
+    Return:
+        - Redirects to home route.
+    """
+    session_id = request.cookies.get("session_id")
+    user = AUTH.get_user_from_session_id(session_id)
+    if user is None:
+        abort(403)
+    AUTH.destroy_session(user.id)
+    return redirect("/")
 
 
 @app.route("/reset_password", methods=["POST"])
